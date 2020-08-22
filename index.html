@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anton's Sudoku Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="index.js"></script>
+</head>
+    <header>
+        <h1>Anton's Sudoku Game</h1>
+        <div id="setup-game">
+            <div id="difficulty">
+                <h3>Choose Difficulty:</h3>
+                <label>Easy  <input id="difficulty-1" type="radio" name="diff" value="easy"checked></label>
+                <label>Medium<input id="difficulty-2" type="radio" name="diff" value="medium"></label>
+                <label>Hard  <input id="difficulty-3" type="radio" name="diff" value="hard"  ></label>
+            </div>
+            <div id="theme">
+                <h3>Choose theme:</h3>
+                <label>Light<input id="theme-1" type="radio" name="theme" value="light"checked></label>
+                <label>Dark <input id="theme-2" type="radio" name="theme" value="dark"></label>
+            </div>
+        </div>
+        <button id="start-btn">Start New Game</button>
+    </header>
+    <body>
+        <div id="game">
+            <div id="board"></div>
+            <div id="num-container" class="hidden">
+                <p id="one">  1</p>
+                <p id="two">  2</p>
+                <p id="three">3</p>
+                <p id="four"> 4</p>
+                <p id="five"> 5</p>
+                <p id="six">  6</p>
+                <p id="seven">7</p>
+                <p id="eight">8</p>
+                <p id="nine"> 9</p>
+            </div>
+        </div>
+    </body>
+    <footer>
+        <p>Made by Anton Le Prevost-Smith.</p>
+        <p><a href="https://github.com/Alps709">Checkout my Github profile!</a></p>
+    </footer>
+</html>
