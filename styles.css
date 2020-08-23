@@ -57,7 +57,7 @@ button
     justify-content: center;
 }
 
-number-container > p 
+#num-container > p 
 {
     border: 1px solid black;
     border-radius: 20%;
@@ -78,8 +78,8 @@ number-container > p
     flex-wrap: wrap;
     justify-content: center;
     align-content: flex-start;
-    width: 800px;
-    height: 800px;
+    width: 600px;
+    height: 600px;
 }
 
 .tile
@@ -111,8 +111,4 @@ p.incorrect
 .bottomborder
 {
     border-bottom: 4px solid black;
-}
-
-footer{
-    
 }

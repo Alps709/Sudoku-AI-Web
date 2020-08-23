@@ -11,15 +11,15 @@
         <h1>Anton's Sudoku Game</h1>
         <div id="setup-game">
             <div id="difficulty">
-                <h3>Choose Difficulty:</h3>
+                <h3>Choose Difficulty: </h3>
                 <label>Easy  <input id="difficulty-1" type="radio" name="diff" value="easy"checked></label>
                 <label>Medium<input id="difficulty-2" type="radio" name="diff" value="medium"></label>
                 <label>Hard  <input id="difficulty-3" type="radio" name="diff" value="hard"  ></label>
             </div>
             <div id="theme">
-                <h3>Choose theme:</h3>
-                <label>Light<input id="theme-1" type="radio" name="theme" value="light"checked></label>
-                <label>Dark <input id="theme-2" type="radio" name="theme" value="dark"></label>
+                <h3>Choose theme: </h3>
+                <label>Light<input id="theme-1" type="radio" name="theme" value="light" onclick="UpdateTheme()"></label>
+                <label>Dark <input id="theme-2" type="radio" name="theme" value="dark"  onclick="UpdateTheme()" checked></label>
             </div>
         </div>
         <button id="start-btn">Start New Game</button>
