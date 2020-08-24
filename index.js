@@ -63,9 +63,25 @@ var emptyBoard =
         [0, 0, 0,  0, 0, 0,  0, 0, 0],
 ];
 
+var defaultBoard = 
+[
+        [8, 0, 0,  4, 0, 6,  0, 0, 7],
+        [0, 0, 0,  0, 0, 0,  4, 0, 0],
+        [0, 1, 0,  0, 0, 0,  6, 5, 0],
+        
+        [5, 0, 9,  0, 3, 0,  7, 8, 0],
+        [0, 0, 0,  0, 7, 0,  0, 0, 0],
+        [0, 4, 8,  0, 2, 0,  1, 0, 3],
+        
+        [0, 5, 2,  0, 0, 0,  0, 9, 0],
+        [0, 0, 1,  0, 0, 0,  0, 0, 0],
+        [3, 0, 0,  9, 0, 2,  0, 0, 5],
+];
+
 var selectedNum;
 var selectedTile;
 var disableSelect;
+var selectedBoardTilePos = 0;
 
 var board;
 
@@ -73,6 +89,40 @@ window.onload = function()
 {
     //Run the game when the start game button is pressed
     id("start-btn").addEventListener("click", StartGame);
+
+    qs("body").classList.add("darkmode");
+
+    //Add an event listen to each number in the number container on the right
+    for (let i = 0; i < id("num-container").children.length; i++) 
+    {
+        const num = id("num-container").children[i].addEventListener("click", function()
+        {
+            //If selected is not disabled
+            if(!disableSelect)
+            {
+                //If the number is already selected, un-select it
+                if(this.classList.contains("selected"))
+                {
+                    //Remove selection
+                    this.classList.remove("selected");
+                    selectedNum = null;
+                }
+                else
+                {
+                    //Deselect the other numbers
+                    for (let i = 0; i < MBS; i++) 
+                    {
+                        id("num-container").children[i].classList.remove("selected");
+                    }  
+                    
+                    //Select it and update selectNum
+                    this.classList.add("selected");
+                    slectedNum = this;
+                    //UpdateMove();
+                }
+            }
+        });
+    }
 }
 
 function UpdateTheme()
@@ -92,7 +142,7 @@ function StartGame()
     //Choose the difficulty for the game
     if(id("difficulty-1").checked)
     {
-        board = emptyBoard;
+        board = defaultBoard;
     } 
 
     //Allows the player to select things
@@ -124,13 +174,40 @@ function drawBoard(board)
              tile.id = idCount;
              idCount++;
 
-            if(board[i][j] == 0)
+            if(board[i][j] != 0)
             {
                 tile.textContent = board[i][j].toString();
             }
             else
             {
                 //Add click event listener to tile
+                tile.addEventListener("click", function()
+                {
+                    //If selecting is enabled
+                    if(!disableSelect)
+                    {
+                        //If the tile is already selected
+                        if(tile.classList.contains("selected"))
+                        {
+                            tile.classList.remove("selected");
+                            selectedTile = null;
+                        }
+                        else
+                        {
+                            //Deselect the other tile
+                            var boardTiles = qsa(".tile");
+
+                            boardTiles[selectedBoardTilePos].classList.remove("selected");
+                            foundSelected = true;
+
+                            //Add selection and update variable
+                            tile.classList.add("selected");
+                            selectedTile = tile;
+                            selectedBoardTilePos = i * MBS + j;
+                            //UpdateMove();
+                        }
+                    }
+                });
             }
 
             //Add new tile class to all tiles
@@ -144,7 +221,7 @@ function drawBoard(board)
 
             if(j == 2 || j == 5)
             {
-                tile.classList.add("rightBorder");
+                tile.classList.add("rightborder");
             }
 
             //Add the tile to the board

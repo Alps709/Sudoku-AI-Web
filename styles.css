@@ -46,6 +46,51 @@ h1
     align-items: center;
 }
 
+#Easy
+{
+    width: 40px;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align:center;
+    display:block;
+}
+
+#Medium
+{
+    width: 60px;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align:center;
+    display:block;
+}
+
+#Hard
+{
+    width: 40px;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align:center;
+    display:block;
+}
+
+#Light
+{
+    width: 40px;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align:center;
+    display:block;
+}
+
+#Dark
+{
+    width: 40px;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align:center;
+    display:block;
+}
+
 button 
 {
     justify-self: center;
@@ -95,7 +140,7 @@ button
 
 p.selected
 {
-    background-color: darkblue;
+    background-color: blue;
 }
 
 p.incorrect
@@ -108,7 +153,7 @@ p.incorrect
     border-right: 4px solid black;
 }
 
-.bottomborder
+.bottomBorder
 {
     border-bottom: 4px solid black;
 }
