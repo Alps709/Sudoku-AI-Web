@@ -117,8 +117,8 @@ window.onload = function()
                     
                     //Select it and update selectNum
                     this.classList.add("selected");
-                    slectedNum = this;
-                    //UpdateMove();
+                    selectedNum = this;
+                    UpdateMove();
                 }
             }
         });
@@ -204,7 +204,7 @@ function drawBoard(board)
                             tile.classList.add("selected");
                             selectedTile = tile;
                             selectedBoardTilePos = i * MBS + j;
-                            //UpdateMove();
+                            UpdateMove();
                         }
                     }
                 });
@@ -227,6 +227,16 @@ function drawBoard(board)
             //Add the tile to the board
             id("board").appendChild(tile);
         }
+    }
+}
+
+function UpdateMove()
+{
+    if(selectedTile && selectedNum)
+    {
+        selectedTile.textContent = selectedNum.textContent;
+        board[selectedBoardTilePos] = parseInt(selectedNum.textContent, 10);
+        console.log(parseInt(selectedNum.textContent, 10));
     }
 }
 
