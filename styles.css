@@ -113,7 +113,14 @@ button
 {
     justify-content: center;
     text-align: center;
-    padding-bottom: 10px;
+    padding-bottom: 20px;
+}
+
+#hint-btn-div
+{
+    justify-content: center;
+    text-align: center;
+    padding-bottom: 20px;
 }
 
 #num-container > p 
@@ -165,6 +172,11 @@ p.incorrect
 p.correct
 {
     background-color: greenyellow;
+}
+
+p.hint
+{
+    background-color: green;
 }
 
 .rightborder

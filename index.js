@@ -304,11 +304,15 @@ let disableSelect;
 let selectedBoardTilePos = 0;
 
 let difficulty = 0;
+let hintNum = 3;
 
 window.onload = function()
 {
     //Run the game when the start game button is pressed
     id("start-btn").addEventListener("click", StartGame);
+
+    //Solve the game and highlight if the player succeded or not
+    id("hint-btn").addEventListener("click", GiveHint);
 
     //Solve the game and highlight if the player succeded or not
     id("check-solved-btn").addEventListener("click", CheckSolvedGame);
@@ -365,14 +369,17 @@ function StartGame()
     if(id("difficulty-1").checked)
     {
         difficulty = 0;
+        hintNum = 3;
     } 
     else if(id("difficulty-2").checked)
     {
         difficulty = 1;
+        hintNum = 4;
     } 
     else
     {
         difficulty = 2;
+        hintNum = 5;
     }
 
     GenerateRandomBoard();
@@ -387,6 +394,67 @@ function StartGame()
     id("num-container").classList.remove("hidden"); 
     id("solve-btn-div").classList.remove("hidden"); 
     id("check-solved-btn-div").classList.remove("hidden"); 
+    id("hint-btn-div").classList.remove("hidden"); 
+}
+
+function GiveHint()
+{
+
+    if(hintNum > 0)
+    {
+        //Find the solved board
+
+        //Copy the board into a new array to be solved
+        Slice2DArray(board, solvedBoard);
+
+        FindViableChecks(solvedBoard);
+
+        //If it couldn't solve the player's board, 
+        //or it couldn't verify the new board after solving it (there is a rare case where it can correctly solve an incorrect board, but this is caused by player error (the solving algorithmn works))
+        //solve it again from the starting board
+        if(!BruteForceSudoku(solvedBoard) || !VerifyBoard(solvedBoard))
+        {
+            //Copy the starting board onto the board to solve
+            Slice2DArray(startingBoard, solvedBoard);
+
+            FindViableChecks(solvedBoard);
+
+            if(!BruteForceSudoku(solvedBoard))
+            {
+                console.log("BUG: It failed to solve the board from the correct starting board, this should be impossible!");
+            }
+        }
+
+
+        let boardHintPos = 0;
+
+        for (let x = 0; x < MBS * MBS; x++)
+        {
+            //Divide the 1D array pos back to a 2D array pos
+            let row = Math.floor(x / 9);
+            let column = x % 9;
+
+            if(board[row][column] == 0)
+            {
+                boardHintPos = x;
+            }
+        }
+
+        //Deselect the other tile
+        let boardTiles = qsa(".tile");
+        
+        //Divide the 1D array pos back to a 2D array pos
+        let row = Math.floor(boardHintPos / 9);
+        let column = boardHintPos % 9;
+        let tile = boardTiles[boardHintPos];
+        
+        tile.textContent = solvedBoard[row][column];
+        tile.classList.remove("incorrect");
+        tile.classList.remove("selected");
+        tile.classList.add("hint");
+
+        hintNum--;
+    }
 }
 
 function CheckSolvedGame()
@@ -491,8 +559,6 @@ function SolveGame()
     foundSelected = false;
     selectedTile = null;
     
-    
-
     //Iterate over board
     for (let x = 0; x < MBS; x++)
     {
