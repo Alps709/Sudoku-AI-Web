@@ -1,5 +1,5 @@
 # Sudoku-AI Web
-The game of sudoku made using HTML, CSS and Javascript.
+The game of sudoku made using HTML, CSS, Javascript and DOM.
 
 How to play:
 1.Choose a difficulty and click the "Start new game button".
