@@ -24,5 +24,6 @@ Features:
 The game generates a new random puzzle every time.
 The puzzel is always solvable.
 The game can solve the board for you.
+Hint system that will give you a certain amount of hints based on difficult.
 The "Check If Solved Game" button can show you your progress, to see if you have solved the board yourself.
 Light and Dark theme.
