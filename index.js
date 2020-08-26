@@ -370,16 +370,19 @@ function StartGame()
     {
         difficulty = 0;
         hintNum = 3;
+        id("hint-btn").textContent = ("Give Hint: " + hintNum);
     } 
     else if(id("difficulty-2").checked)
     {
         difficulty = 1;
         hintNum = 4;
+        id("hint-btn").textContent = ("Give Hint: " + hintNum);
     } 
     else
     {
         difficulty = 2;
         hintNum = 5;
+        id("hint-btn").textContent = ("Give Hint: " + hintNum);
     }
 
     GenerateRandomBoard();
@@ -399,7 +402,6 @@ function StartGame()
 
 function GiveHint()
 {
-
     if(hintNum > 0)
     {
         //Find the solved board
@@ -448,12 +450,14 @@ function GiveHint()
         let column = boardHintPos % 9;
         let tile = boardTiles[boardHintPos];
         
+        board[row][column] = solvedBoard[row][column];
         tile.textContent = solvedBoard[row][column];
         tile.classList.remove("incorrect");
         tile.classList.remove("selected");
         tile.classList.add("hint");
 
         hintNum--;
+        id("hint-btn").textContent = ("Give Hint: " + hintNum);
     }
 }
 
