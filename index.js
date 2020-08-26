@@ -8,12 +8,14 @@ let EMPTY = 0;
 
 let iterations = 0;
 
+let solvedNum = 0;
+
 //A 3d array that keeps track of what viable number placement options there are for each position on the board
 let viableNumberChecks = [];
 let viableNumberChecksSorted = [];
 
-
-
+let startingBoard = [[]];
+let solvedBoard = [[]];
 //Initialise board
 let board  = 
 [
@@ -64,14 +66,14 @@ let defaultBoard =
 //Sudoku Function//
 ///////////////////
 
-function FindEmpty()
+function FindEmpty(_board)
 {
     var returnVals = [];
     for (var i = 0; i < MBS; i++)
     {
         for (var j = 0; j < MBS; j++)
         {
-            if(board[i][j] == EMPTY)
+            if(_board[i][j] == EMPTY)
             {
                 returnVals = [true, i, j];
                 return returnVals;
@@ -132,8 +134,29 @@ function CanPlace(_board, _x, _y, _numToCheck)
         && BoxClear(_board, _x, _y, _numToCheck);
 }
 
+function VerifyBoard(_board)
+{
+    for (let x = 0; x < MBS; x++)
+    {
+        for (let y = 0; y < MBS; y++)
+        {
+            //Take out number and save it, plcae it back afterwards
+            let tempNum = _board[x][y];
+            _board[x][y] = 0;
+
+            if(!CanPlace(_board, x, y, _board[x][y]))
+            {
+                _board[x][y] = tempNum;
+                return false;
+            }
+            _board[x][y] = tempNum;
+        }
+    }
+    return true;
+}
+
 //Finds all the numbers that are possibly viable to place in a tile
-function FindViableChecks()
+function FindViableChecks(_board)
 {
     //Reset the 3D array
     viableNumberChecks = viableNumberChecks.splice(0, viableNumberChecks.length);
@@ -144,62 +167,42 @@ function FindViableChecks()
         for (let y = 0; y < MBS; y++)
         {
             //Check if we can even place something
-            if(board[x][y] == EMPTY)
+            if(_board[x][y] == EMPTY)
             {
                 for (let num = 1; num <= MBS; num++)
                 {
-                    if(CanPlace(board, x, y, num))
+                    if(CanPlace(_board, x, y, num))
                     {
                         viableNumberChecks[x][y].push(num);
                     }
                 }
             }
-            let PositionNum = 
-            {
-                pos: [x, y],
-                arrayLength: viableNumberChecks[x][y].length
-            }
+            //This was going to be used as an optimization by using best first search
+            // let PositionNum = 
+            // {
+            //     pos: [x, y],
+            //     arrayLength: viableNumberChecks[x][y].length
+            // }
 
-            viableNumberChecksSorted.push(PositionNum);
+            // viableNumberChecksSorted.push(PositionNum);
         }
     }
 
-    console.log(viableNumberChecks);
-
-    viableNumberChecksSorted.sort(function(a, b)
-    {
-        return a.arrayLength - b.arrayLength;
-    });
-
-    console.log(viableNumberChecksSorted);
-
-    //Shuffle the sequence of random numbers so that it has a better chance of quickly beating backtracking-counter-boards (the difficult board below was specifically designed to make it take long for backtracking to complete, shuffling the board this way makes it so a board can't be designed to make it take as long as possible, although this does mean the algorithmn will result in different solve times, even on the same board)
-    // for (let x = 0; x < MBS; x++)
+    // viableNumberChecksSorted.sort(function(a, b)
     // {
-    //     for (let y = 0; y < MBS; y++)
-    //     {
-    //         //If there is only 1 viable number for a position, then place that number
-    //         if(viableNumberChecks[x][y].count == 1)
-    //         {
-    //             _board[x][y] = viableNumberChecks[x][y][0];
-    //             viableNumberChecks[x][y].removeAll();
-    //         }
-    //         else
-    //         {
-    //             //Otherwise shuffle the sequence
-    //             viableNumberChecks[x][y].shuffle();
-    //         }
-    //     }
-    // }
+    //     return a.arrayLength - b.arrayLength;
+    // });
+
+    // console.log(viableNumberChecksSorted);
     return viableNumberChecks;
 }
 
-let counter = 0;
 //Sudoku recursive brute force back-tracking function
-function BruteForceSudoku()
+function BruteForceSudoku(_board)
 {
-    console.log(counter++);
-    var foundEmptySlot = FindEmpty(board);
+    iterations++;
+
+    var foundEmptySlot = FindEmpty(_board);
     //Find the next empty position on the board
     if(!foundEmptySlot[0])
     {
@@ -214,20 +217,22 @@ function BruteForceSudoku()
     {
         //Recheck if this number can actually be placed, 
         //because we may have updated the board by the time we get here
-        if(CanPlace(board, x, y, viableNumberChecks[x][y][i]))
+        if(CanPlace(_board, x, y, viableNumberChecks[x][y][i]))
         {
             //Try out this number
-            board[x][y] = viableNumberChecks[x][y][i];
+            _board[x][y] = viableNumberChecks[x][y][i];
+            solvedNum++
             
             //Do it again
-            if(BruteForceSudoku())
+            if(BruteForceSudoku(_board))
             {
                 //Returns true if we hit the base case of there being no more open places
                 return true;
             }
             
             //Failed to solve using the current number, so set it back to 0
-            board[x][y] = EMPTY;
+            _board[x][y] = EMPTY;
+            solvedNum--;
         }
     }
     //Backtrack to the previous function call
@@ -237,9 +242,6 @@ function BruteForceSudoku()
 //Generate random Sudoku board based on difficulty setting
 function GenerateRandomBoard()
 {
-    //Determine difficulty here
-
-
     /////////////////////////////////
     //Create and solve a board here//
     /////////////////////////////////
@@ -249,33 +251,44 @@ function GenerateRandomBoard()
     //Shuffle the sequence to make it random
     arrayShuffle(randomSequence);
     
-    //Set the first row of the board to this random sequence
+    //Clear the board
     Slice2DArray(emptyBoard, board);
 
     //Set the top row to the new random sequence that was just generated
     board[0] = randomSequence.slice();
-    console.log(board);
+    solvedNum = 9;
 
     //Calculate the checks so we only check what can actually be placed
     FindViableChecks(board);
 
     //Solve the board
     //Start from the 1, 0 place since we randomly generated the first row
-    if(!BruteForceSudoku(0, 0))
+    iterations = 0;
+    if(!BruteForceSudoku(board))
     {
         //Can't solve the board???? this should be impossible!!!!
         console.log("Failed to solve the always solvable sudoku puzzle! You have a bug!");
     }
     
-    // //Find a random position and set it to 0
-    // //Do this x amount of times based on difficulty
-    // for _ in 1...clearNumber
-    // {
-    //     let index1:Int = Int.random(in: 0..<MBS);
-    //     let index2:Int = Int.random(in: 0..<MBS);
-    //     board[index1][index2] = 0;
-    // }
-    // print("Finished generating random Sudoku puzzle!");
+    console.log(iterations);
+    console.log(solvedNum);
+
+    //Determine difficulty here
+
+     //Find a random position and set it to 0
+     //Do this x amount of times based on difficulty
+     let clearNumber = 20 + 20 * difficulty;
+     for (let i = 0; i < clearNumber; i++)
+     {
+         let index1 = Math.floor(Math.random() * 9);
+         let index2 = Math.floor(Math.random() * 9);
+         board[index1][index2] = 0;
+    }
+
+    //Save the original board to use later on
+    Slice2DArray(board, startingBoard);
+
+    console.log("Finished generating random Sudoku puzzle!");
 }
 
 
@@ -295,6 +308,12 @@ window.onload = function()
 {
     //Run the game when the start game button is pressed
     id("start-btn").addEventListener("click", StartGame);
+
+    //Solve the game and highlight if the player succeded or not
+    id("check-solved-btn").addEventListener("click", CheckSolvedGame);
+
+    //Solve the game and highlight if the player succeded or not
+    id("solve-btn").addEventListener("click", SolveGame);
 
     qs("body").classList.add("darkmode");
 
@@ -320,6 +339,14 @@ window.onload = function()
                     {
                         id("num-container").children[i].classList.remove("selected");
                     }  
+
+                    //Deselect the other tile
+                    let boardTiles = qsa(".tile");
+
+                    //Deselect the board tile when switching num-containers
+                    boardTiles[selectedBoardTilePos].classList.remove("selected");
+                    foundSelected = false;
+                    selectedTile = null;
                     
                     //Select it and update selectNum
                     this.classList.add("selected");
@@ -336,28 +363,159 @@ function StartGame()
     //Choose the difficulty for the game
     if(id("difficulty-1").checked)
     {
-        //Slice2DArray(defaultBoard, board);
-        GenerateRandomBoard(board);
+        difficulty = 0;
     } 
+    else if(id("difficulty-2").checked)
+    {
+        difficulty = 1;
+    } 
+    else
+    {
+        difficulty = 2;
+    }
+
+    GenerateRandomBoard();
 
     //Allows the player to select things
     disableSelect = false;
 
     //Draw the board
-    createGameBoard(board);
+    CreateGameBoard(board);
 
     //Show the number container
     id("num-container").classList.remove("hidden"); 
+    id("solve-btn-div").classList.remove("hidden"); 
+    id("check-solved-btn-div").classList.remove("hidden"); 
 }
 
-function createGameBoard(board)
+function CheckSolvedGame()
+{
+    //Copy the board into a new array to be solved
+    Slice2DArray(board, solvedBoard);
+
+    FindViableChecks(solvedBoard);
+
+    //If it couldn't solve the player's board, 
+    //or it couldn't verify the new board after solving it (there is a rare case where it can correctly solve an incorrect board, but this is caused by player error (the solving algorithmn works))
+    //solve it again from the starting board
+    if(!BruteForceSudoku(solvedBoard) || !VerifyBoard(solvedBoard))
+    {
+        //Copy the starting board onto the board to solve
+        Slice2DArray(startingBoard, solvedBoard);
+
+        FindViableChecks(solvedBoard);
+
+        if(!BruteForceSudoku(solvedBoard))
+        {
+            console.log("It failed to solve the board from the correct starting board, this should be impossible!");
+        }
+    }
+
+    //Deselect the other tile
+    let boardTiles = qsa(".tile");
+
+    //Deselect the board tile when switching num-containers
+    boardTiles[selectedBoardTilePos].classList.remove("selected");
+    foundSelected = false;
+    selectedTile = null;
+
+    //Iterate over board
+    for (let x = 0; x < MBS; x++)
+    {
+        for (let y = 0; y < MBS; y++)
+        {
+            if(startingBoard[x][y] == 0)
+            {
+                if (board[x][y] === solvedBoard[x][y])
+                {
+                    //The tiles are the same number so the player correctly solved this number
+                    let solvedTile = boardTiles[x * MBS + y];
+                    solvedTile.classList.remove("selected");
+                    solvedTile.classList.add("correct");
+                }
+                else
+                {
+                    //The tiles are not the  same number so the player didn't solve this number
+                    let solvedTile = boardTiles[x * MBS + y];
+                    solvedTile.classList.remove("selected");
+                    solvedTile.classList.remove("correct");
+                    solvedTile.classList.add("incorrect");
+                }
+            }
+        }
+    }
+}
+
+function SolveGame()
+{
+    //Copy the board into a new array to be solved
+    Slice2DArray(board, solvedBoard);
+
+    FindViableChecks(solvedBoard);
+
+    //If it couldn't solve the player's board, 
+    //or it couldn't verify the new board after solving it (there is a rare case where it can correctly solve an incorrect board, but this is caused by player error (the solving algorithmn works))
+    //solve it again from the starting board
+    if(!BruteForceSudoku(solvedBoard) || !VerifyBoard(solvedBoard))
+    {
+        //Copy the starting board onto the board to solve
+        Slice2DArray(startingBoard, solvedBoard);
+
+        FindViableChecks(solvedBoard);
+
+        if(!BruteForceSudoku(solvedBoard))
+        {
+            console.log("It failed to solve the board from the correct starting board, this should be impossible!");
+        }
+        else
+        {
+            //Copy the solved board into the displayed board
+            Slice2DArray(solvedBoard, board);
+        }
+    }
+    else
+    {
+        //Copy the solved board into the displayed board
+        Slice2DArray(solvedBoard, board);
+    }
+
+    //Create a new board with the correct solved numbers
+    CreateGameBoard();
+
+    //Deselect the other tile
+    let boardTiles = qsa(".tile");
+    
+    //Deselect the board tile
+    boardTiles[selectedBoardTilePos].classList.remove("selected");
+    foundSelected = false;
+    selectedTile = null;
+    
+    
+
+    //Iterate over board
+    for (let x = 0; x < MBS; x++)
+    {
+        for (let y = 0; y < MBS; y++)
+        {
+            if(startingBoard[x][y] == 0)
+            {
+                //The tiles are not the  same number so the player didn't solve this number
+                let solvedTile = boardTiles[x * MBS + y];
+                solvedTile.classList.remove("selected");
+                solvedTile.classList.add("correct");
+            }
+        }
+    }
+}
+
+function CreateGameBoard()
 {
     ClearPreviousGame();
 
     //Counts the number of tiles so we can set their id's
     let idCount = 0;
 
-    //Create the 91 board tiles
+    //Create the 81 board tiles
     for (let i = 0; i < MBS; i++)
     {
         for (let j = 0; j < MBS; j++)
@@ -395,7 +553,7 @@ function createGameBoard(board)
                             boardTiles[selectedBoardTilePos].classList.remove("selected");
                             foundSelected = true;
 
-                            //Add selection and update letiable
+                            //Add selection and update
                             tile.classList.add("selected");
                             selectedTile = tile;
                             selectedBoardTilePos = i * MBS + j;
@@ -436,11 +594,9 @@ function UpdateMove()
         let row = Math.floor(selectedBoardTilePos / 9);
         let column = selectedBoardTilePos % 9;
 
-        //The the board position
+        //Update the board position
         board[row][column] = parseInt(selectedNum.textContent, 10);
     }
-
-    console.log(FindViableChecks(board));
 }
 
 function ClearPreviousGame()

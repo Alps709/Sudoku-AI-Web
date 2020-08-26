@@ -102,6 +102,20 @@ button
     justify-content: center;
 }
 
+#check-solved-btn-div
+{
+    justify-content: center;
+    text-align: center;
+    padding-bottom: 20px;
+}
+
+#solve-btn-div
+{
+    justify-content: center;
+    text-align: center;
+    padding-bottom: 10px;
+}
+
 #num-container > p 
 {
     border: 1px solid black;
@@ -145,7 +159,12 @@ p.selected
 
 p.incorrect
 {
-    color: red;
+    background-color: red;
+}
+
+p.correct
+{
+    background-color: greenyellow;
 }
 
 .rightborder
