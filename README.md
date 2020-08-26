@@ -21,6 +21,8 @@ How to play:
 
 Features:
 3 Levels of difficulty.
+The game generates a new random puzzle every time.
+The puzzel is always solvable.
 The game can solve the board for you.
 The "Check If Solved Game" button can show you your progress, to see if you have solved the board yourself.
 Light and Dark theme.
