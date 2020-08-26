@@ -427,8 +427,7 @@ function GiveHint()
             }
         }
 
-
-        let boardHintPos = 0;
+        let boardHintPlaces = [];
 
         for (let x = 0; x < MBS * MBS; x++)
         {
@@ -438,26 +437,31 @@ function GiveHint()
 
             if(board[row][column] == 0)
             {
-                boardHintPos = x;
+                boardHintPlaces.push(x);
             }
         }
 
-        //Deselect the other tile
-        let boardTiles = qsa(".tile");
-        
-        //Divide the 1D array pos back to a 2D array pos
-        let row = Math.floor(boardHintPos / 9);
-        let column = boardHintPos % 9;
-        let tile = boardTiles[boardHintPos];
-        
-        board[row][column] = solvedBoard[row][column];
-        tile.textContent = solvedBoard[row][column];
-        tile.classList.remove("incorrect");
-        tile.classList.remove("selected");
-        tile.classList.add("hint");
+        if(boardHintPlaces.length > 0)
+        {
+            arrayShuffle(boardHintPlaces);
 
-        hintNum--;
-        id("hint-btn").textContent = ("Give Hint: " + hintNum);
+            //Deselect the other tile
+            let boardTiles = qsa(".tile");
+            
+            //Divide the 1D array pos back to a 2D array pos
+            let row = Math.floor(boardHintPlaces[0] / 9);
+            let column = boardHintPlaces[0] % 9;
+            let tile = boardTiles[row * MBS + column];
+            
+            board[row][column] = solvedBoard[row][column];
+            tile.textContent = solvedBoard[row][column];
+            tile.classList.remove("incorrect");
+            tile.classList.remove("selected");
+            tile.classList.add("hint");
+
+            hintNum--;
+            id("hint-btn").textContent = ("Give Hint: " + hintNum);
+        }
     }
 }
 
@@ -572,7 +576,9 @@ function SolveGame()
             {
                 //The tiles are not the  same number so the player didn't solve this number
                 let solvedTile = boardTiles[x * MBS + y];
+
                 solvedTile.classList.remove("selected");
+                solvedTile.classList.remove("incorrect");
                 solvedTile.classList.add("correct");
             }
         }
