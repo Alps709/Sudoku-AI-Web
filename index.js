@@ -178,6 +178,7 @@ function FindViableChecks(_board)
                 }
             }
             //This was going to be used as an optimization by using best first search
+            //But the performance was good enough anyway
             // let PositionNum = 
             // {
             //     pos: [x, y],
@@ -187,7 +188,8 @@ function FindViableChecks(_board)
             // viableNumberChecksSorted.push(PositionNum);
         }
     }
-
+    //This was going to be used as an optimization by using best first search
+    //But the performance was good enough anyway
     // viableNumberChecksSorted.sort(function(a, b)
     // {
     //     return a.arrayLength - b.arrayLength;
@@ -270,8 +272,7 @@ function GenerateRandomBoard()
         console.log("Failed to solve the always solvable sudoku puzzle! You have a bug!");
     }
     
-    console.log(iterations);
-    console.log(solvedNum);
+    console.log("Generated a solved Sudoku board in: ", iterations, " iterations");
 
     //Determine difficulty here
 
@@ -407,7 +408,7 @@ function CheckSolvedGame()
 
         if(!BruteForceSudoku(solvedBoard))
         {
-            console.log("It failed to solve the board from the correct starting board, this should be impossible!");
+            console.log("BUG: It failed to solve the board from the correct starting board, this should be impossible!");
         }
     }
 
@@ -465,7 +466,7 @@ function SolveGame()
 
         if(!BruteForceSudoku(solvedBoard))
         {
-            console.log("It failed to solve the board from the correct starting board, this should be impossible!");
+            console.log("BUG: It failed to solve the board from the correct starting board, this should be impossible!");
         }
         else
         {
@@ -482,9 +483,9 @@ function SolveGame()
     //Create a new board with the correct solved numbers
     CreateGameBoard();
 
-    //Deselect the other tile
+    //Get a reference to all the HTML tiles
     let boardTiles = qsa(".tile");
-    
+
     //Deselect the board tile
     boardTiles[selectedBoardTilePos].classList.remove("selected");
     foundSelected = false;
