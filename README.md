@@ -1,5 +1,6 @@
 # Sudoku-AI Web
 The game of sudoku made using HTML, CSS, Javascript and DOM.
+Play online here: https://alps709.github.io/Sudoku-AI-Web/.
 
 How to play:
 
